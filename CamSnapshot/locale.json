@@ -1,0 +1,19 @@
+{
+	"translations": {
+		"de": { 
+			"Snapshot URL":               "Snapshot URL",
+			"Create Small Image":         "Bild mit kleinerer Auflösung erstellen",
+			"RatioSmall":                 "Verhältnis Image",
+			"AutoRefresh":                "Automatische Aktualisierung der Bilder",
+			"Seconds":                    "Sekunden",
+			
+			"Refresh":                    "Aktualisieren",
+
+			"AutoRefresh is active":      "Aktualisierung ist aktiv",
+			"AutoRefresh is inactive":    "Aktualisierung ist inaktiv",
+			"No URL specified" :          "Keine URL angegeben",
+			"Download of Image failed" :  "Download des Images fehlgeschlagen",
+			"Write Image failed" :        "Schreiben des Images fehlgeschlagen"    
+		}
+	}
+}

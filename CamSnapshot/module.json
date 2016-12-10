@@ -1,0 +1,14 @@
+{
+	"id": "{0A512DFC-E0B6-4432-BF6D-6A8C5BC20408}",
+	"name": "CamSnapshot",
+	"type": 3,
+	"vendor": "Brownson",
+	"aliases": 
+	[
+		"Camera Snapshots"
+	],
+	"parentRequirements": [],
+	"childRequirements": [],
+	"implemented": [],
+	"prefix": "CamSnapshot"
+}

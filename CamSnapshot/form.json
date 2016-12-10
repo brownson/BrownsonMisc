@@ -1,0 +1,21 @@
+{ 
+	"elements": [ 
+		{ "type": "ValidationTextBox", "name": "SnapshotURL", "caption": "Snapshot URL" }, 
+        { "type": "Label",                               "label":   "---------------------------------" },
+		{ "type": "CheckBox",      "name": "CreateSmall","caption": "Create Small Image" },
+        { "type": "NumberSpinner", "name": "RatioSmall", "caption": "Ratio Small Image", "digits": 3},
+        { "type": "Label",                               "label":   "---------------------------------" },
+		{ "type": "CheckBox",      "name": "AutoRefresh","caption": "AutoRefresh" },
+		{ "type": "IntervalBox",   "name": "Interval",   "caption": "Seconds" }
+	], 
+	"actions": [ 
+		{ "type": "Button", "label": "Refresh", "onClick": "CamSnapshot_Refresh($id);" }
+	] ,
+   "status": [
+        { "code": 102, "icon": "active",   "caption": "AutoRefresh is active" },
+        { "code": 104, "icon": "inactive", "caption": "AutoRefresh is inactive" },
+        { "code": 201, "icon": "error",    "caption": "No URL specified" },
+        { "code": 202, "icon": "error",    "caption": "Download of Image failed" },
+        { "code": 203, "icon": "error",    "caption": "Write Image failed" }
+	]
+}
