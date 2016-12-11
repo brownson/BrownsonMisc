@@ -8,7 +8,7 @@ Das Modul stellt Funktionen zum Laden und aktualisieren von Kamera Snapshots zur
 3. [Software-Installation](#3-software-installation)
 4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
 5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront](#6-webfront)
+6. [WebFront & IPSView](#6-webfront)
 7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
 
 ### 1. Funktionsumfang
@@ -32,19 +32,20 @@ Das Modul stellt Funktionen zum Laden und aktualisieren von Kamera Snapshots zur
 
 __Konfigurationsseite__:
 
-Name                    | Beschreibung
------------------------ | ---------------------------------
-Snapshot URL            | URL für den Download der Images
-Pixel X                 | Verhältnis in X Richtung für die Änderung der Skalierung 
-Pixel Y                 | Verhältnis in Y Richtung für die Änderung der Skalierung 
-Autom Aktualisierung    | Automatische Aktualisierung der Images
-Interval                | Zeitinterval für die automatische Aktualisierung
+Name                                   | Beschreibung
+-------------------------------------- | ---------------------------------
+Snapshot URL                           | URL für den Download der Images
+Use Media Cache                        | Aktivierung der "cached" Option für MediaImages 
+Bild mit kleinerer Auflösung erstellen | Erstellt ein Bild mit geringer Auflösung (ermöglicht schnelleres Laden in der GUI)
+Verhältnis Image                       | Verhältnis für die Skalierung 
+Autom Aktualisierung                   | Automatische Aktualisierung der Images
+Interval                               | Zeitinterval für die automatische Aktualisierung
 
 __Testseite__:
 
-Name                    | Beschreibung
------------------------ | ---------------------------------
-Button "Aktualisieren"  | Snapshot Images von Kamera herunterladen
+Name                                   | Beschreibung
+-------------------------------------- | ---------------------------------
+Button "Aktualisieren"                 | Snapshot Images von Kamera herunterladen
 
 ### 5. Statusvariablen und Profile
 
@@ -52,15 +53,17 @@ Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzeln
 
 ##### Statusvariablen
 
-Es werden keine Statusvariablen angelegt
+Keine speziellen Statusvariablen vorhanden
 
 ##### Profile:
 
 Es werden keine zusätzlichen Profile hinzugefügt
 
-### 6. WebFront
+### 6. WebFront & IPSView
 
-Keine spezielle Visualisierung für das WebFront vorhanden
+ImageLarge - MediaImage des heruntergeladenen Kamerabildes
+ImageSmall - MediaImage des verkleinerten Kamerabildes
+Refresh    - Skript zum Refresh des Kamerabildes
 
 ### 7. PHP-Befehlsreferenz
 
