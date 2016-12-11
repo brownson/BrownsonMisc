@@ -1,12 +1,13 @@
 { 
 	"elements": [ 
-		{ "type": "ValidationTextBox", "name": "SnapshotURL", "caption": "Snapshot URL" }, 
-        { "type": "Label",                               "label":   "---------------------------------" },
-		{ "type": "CheckBox",      "name": "CreateSmall","caption": "Create Small Image" },
-        { "type": "NumberSpinner", "name": "RatioSmall", "caption": "Ratio Small Image", "digits": 3},
-        { "type": "Label",                               "label":   "---------------------------------" },
-		{ "type": "CheckBox",      "name": "AutoRefresh","caption": "AutoRefresh" },
-		{ "type": "IntervalBox",   "name": "Interval",   "caption": "Seconds" }
+		{ "type": "ValidationTextBox", "name": "SnapshotURL",   "caption": "Snapshot URL" }, 
+ 		{ "type": "CheckBox",          "name": "UseMediaCache", "caption": "Use Media Cache" },
+        { "type": "Label",                                      "label":   "---------------------------------" },
+		{ "type": "CheckBox",          "name": "CreateSmall",   "caption": "Create Small Image" },
+        { "type": "NumberSpinner",     "name": "RatioSmall",    "caption": "Ratio Small Image", "digits": 3},
+        { "type": "Label",                                      "label":   "---------------------------------" },
+		{ "type": "CheckBox",          "name": "AutoRefresh",   "caption": "AutoRefresh" },
+		{ "type": "IntervalBox",       "name": "Interval",      "caption": "Seconds" }
 	], 
 	"actions": [ 
 		{ "type": "Button", "label": "Refresh", "onClick": "CamSnapshot_Refresh($id);" }

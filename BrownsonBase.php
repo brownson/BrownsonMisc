@@ -2,6 +2,7 @@
 
 class BrownsonBase extends IPSModule
 {
+	protected $showMemoryUsage = false;
 
 	public function Create()
 	{
@@ -26,9 +27,18 @@ class BrownsonBase extends IPSModule
 	
 	// -------------------------------------------------------------------------
 	protected function ShowMemoryUsage($statusMessage) {
-		$statusMessage = substr($statusMessage.'                                                            ', 0, 60);
-		$memory = round(memory_get_usage() / 1024 / 1024, 2);
-		$this->SendDebug("Resize", $statusMessage . ' UsedMemory='.$memory. " MB", 0);
+		if ($this->showMemoryUsage) {
+			$memory = round(memory_get_usage() / 1024 / 1024, 2);
+			$this->SendDebug("ShowMemoryUsage", $statusMessage . ', UsedMemory='.$memory. " MB", 0);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	protected function ShowMemoryAvailable($statusMessage) {
+		if ($this->showMemoryUsage) {
+			$memory = ini_get('memory_limit');
+			$this->SendDebug("ShowMemoryAvailable", $statusMessage . ', AvailableMemory='.$memory. " MB", 0);
+		}
 	}
 
 	// -------------------------------------------------------------------------

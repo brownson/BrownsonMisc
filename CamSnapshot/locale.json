@@ -3,6 +3,7 @@
 		"de": { 
 			"Snapshot URL":               "Snapshot URL",
 			"Create Small Image":         "Bild mit kleinerer Auflösung erstellen",
+			"Use Media Cache":            "Cached MediaImages benützen",
 			"Ratio Small Image":          "Verhältnis Image",
 			"AutoRefresh":                "Automatische Aktualisierung der Bilder",
 			"Seconds":                    "Sekunden",

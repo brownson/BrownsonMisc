@@ -10,6 +10,7 @@ class CamSnapshot extends BrownsonBase
 		parent::Create();
 
 		$this->RegisterPropertyString("SnapshotURL", '');
+		$this->RegisterPropertyBoolean("UseMediaCache", false);		
 
 		$this->RegisterPropertyBoolean("CreateSmall", false);		
 		$this->RegisterPropertyFloat("RatioSmall", 2.0);
@@ -37,7 +38,6 @@ class CamSnapshot extends BrownsonBase
 		
 		$snapshotURL      = $this->ReadPropertyString('SnapshotURL');
 		$autoRefresh      = $this->ReadPropertyBoolean('AutoRefresh');
-		
 		if ($snapshotURL=="") {
 			$this->SetStatus(201); //No URL specified
 		} else if (!$autoRefresh) {
@@ -59,37 +59,39 @@ class CamSnapshot extends BrownsonBase
 	public function Refresh()
 	{
 		$this->SendDebug("Refresh", "Execute Refresh of SnapshotImage:", 0);
-		$this->SendDebug("Refresh", "Available Memory: ".ini_get('memory_limit'), 0);
+		$this->ShowMemoryAvailable("Refresh");
 		
 		if ($this->IsInstancePropertiesValid()) {
 			$snapshotURL      = $this->ReadPropertyString('SnapshotURL');
 			
 			// Download Images
-			$this->ShowMemoryUsage('Startup: ');
+			$this->ShowMemoryUsage('Start Refresh of Images');
 			$data = $this->GetSnapshotImageFromURL($snapshotURL);
 
 			if ($data===false) {
 				$this->SetStatus(202); //Download failed
 				return;
 			}
-			
-			$filenameLarge = IPS_GetKernelDir().'media\CamSnapshot_'.$this->InstanceID.'_Large.jpg';
-			$mediaIDLarge  = $this->RegisterMedia ('imagelarge', 'ImageLarge', $filenameLarge);
-   
-			if ($this->WriteMediaContent('imagelarge', $data)===false) {
+			   
+			if ($this->WriteMediaContent('imagelarge', 'ImageLarge', $data)===false) {
 				$this->SetStatus(203); //Write failed
 				return;
 			}
-			//if ($this->WriteMediaFileResized($filenameLarge, $filenameSmall)===false) {
-			//	$this->SetStatus(203); //Write failed
-			//	return;
-			//}
-			if ($this->WriteMediaContentResized('imagelarge', 'imageSmall')===false) {
+			if ($this->WriteMediaContentResized('imagesmall', 'ImageSmall', 'imagelarge')===false) {
 				$this->SetStatus(203); //Write failed
 				return;
 			}
+
+			$autoRefresh      = $this->ReadPropertyBoolean('AutoRefresh');
+			$instance = IPS_GetInstance($this->InstanceID);
+			$status   = $instance['InstanceStatus'];
+			if (!$autoRefresh) {
+				$this->SetStatus(104); //Instanz ist inaktiv
+			} else {
+				$this->SetStatus(102); //Instanz ist aktiv
+			}
 			
-			$this->ShowMemoryUsage('finished:');
+			$this->ShowMemoryUsage('Finished Refresh');
 		} else {
 			$this->SendDebug("Refresh", "InstanceProperties NOT Valid, ignore Refresh ...", 0);		
 		}
@@ -100,22 +102,6 @@ class CamSnapshot extends BrownsonBase
 	// ----------------------------------------------------------------------------------------------------
 	
 	// -------------------------------------------------------------------------
-	private function WriteMediaFile ($fileName, $fileContent) {
-		$this->SendDebug("WriteMediaFile", 'Write ImageData to '.$fileName, 0);
-		$result = file_put_contents($fileName, $fileContent);
-		if ($result===false) {
-			$this->SendDebug("WriteMediaFile", 'Error writing ImageData to '.$fileName.' --> Retry ...', 0);
-			IPS_Sleep(1000);
-			$result = file_put_contents($fileName, $fileContent);
-		}
-		if ($result===false) {
-			$this->SendDebug("WriteMediaFile", 'Error writing ImageData to '.$fileName, 0);
-			return false;
-		}
-		return true;
-	}
-
-	// -------------------------------------------------------------------------
 	protected function IsInstancePropertiesValid()
 	{		
 		$instance = IPS_GetInstance($this->InstanceID);
@@ -125,46 +111,33 @@ class CamSnapshot extends BrownsonBase
 	}
 	
 	// -------------------------------------------------------------------------
-	private function WriteMediaFileResized ($fileNameLarge, $fileNameSmall) {
-		$createSmall      = $this->ReadPropertyBoolean('CreateSmall');
-		$ratioSmall      = $this->ReadPropertyFloat('RatioSmall');
-		if ($createSmall) {
-			list($width, $height, $type, $attr) = getimagesize($fileNameLarge);
-						
-			$thumb = imagecreatetruecolor($width/$ratioSmall,
-										  $height/$ratioSmall);
-			$source = imagecreatefromjpeg($filenameLarge);
-			imagecopyresized($thumb, $source, 0, 0, 0, 0,
-	                         $width/$ratioSmall,
-						     $height/$ratioSmall,
-						     $width, 
-						     $height);
-						 
-			imagejpeg($thumb, $filenameSmall);
-		}
-
-		return true;
-	}
-	
-	// -------------------------------------------------------------------------
-	private function WriteMediaContent ($ident, $data) {
+	private function WriteMediaContent ($ident, $name, $data) {
 		$this->SendDebug("WriteMediaContent", 'Write ImageData to Object with Ident='.$ident, 0);
-		$mediaId = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
-		IPS_SetMediaCached($mediaId, true);
+
+		$filenameLarge   = IPS_GetKernelDir().'media\CamSnapshot_'.$this->InstanceID.'_Large.jpg';
+		$mediaId         = $this->RegisterMedia ($ident, $name, $filenameLarge);
+		$useMediaCache   = $this->ReadPropertyBoolean('UseMediaCache');
+
+		IPS_SetMediaCached($mediaId, $useMediaCache);
 		$result = IPS_SetMediaContent($mediaId, base64_encode($data));
 		if ($result===false) {
 			$this->SendDebug("WriteMediaContent", 'Error writing ImageData to '.$ident, 0);
 			return false;
 		}
+
+		$this->SendDebug("WriteMediaContent", "SetMediaImage for downloaded Image", 0);
+		$this->ShowMemoryUsage('Created Image');
+
 		return true;
 	}
 
 	// -------------------------------------------------------------------------
-	private function WriteMediaContentResized ($identLarge, $identSmall) {
+	private function WriteMediaContentResized ($identSmall, $name, $identLarge) {
 		$createSmall     = $this->ReadPropertyBoolean('CreateSmall');
 		if ($createSmall) {
 			$filenameSmall   = IPS_GetKernelDir().'media\CamSnapshot_'.$this->InstanceID.'_Small.jpg';
-			$mediaIDSmall    = $this->RegisterMedia ($identSmall, 'ImageSmall', $filenameSmall);
+			$mediaIDSmall    = $this->RegisterMedia ($identSmall, $name, $filenameSmall);
+		    $useMediaCache   = $this->ReadPropertyBoolean('UseMediaCache');
 
 			$ratioSmall      = $this->ReadPropertyFloat('RatioSmall');
 			$mediaIdLarge    = @IPS_GetObjectIDByIdent($identLarge, $this->InstanceID);
@@ -173,6 +146,8 @@ class CamSnapshot extends BrownsonBase
 			$dataLargeBase64 = IPS_GetMediaContent($mediaIdLarge);
 			$dataLarge       = base64_decode($dataLargeBase64);
 			$source          = imagecreatefromstring($dataLarge);
+
+			$this->SendDebug("WriteMediaContentResized", "Build resized Image with Ratio=".$ratioSmall , 0);
 			list($width, $height, $type, $attr) = getimagesize(IPS_GetKernelDir().$mediaLarge['MediaFile']);
 						
 			$thumb = imagecreatetruecolor($width / $ratioSmall,
@@ -190,12 +165,15 @@ class CamSnapshot extends BrownsonBase
 						     $height);
 						 
 			ob_start();
-			imagepng($thumb);
+			imagejpeg($thumb);
 			$data = ob_get_clean();
 						
-			IPS_SetMediaCached($mediaIdSmall, false);
+			IPS_SetMediaCached($mediaIdSmall, $useMediaCache);
 			$result = IPS_SetMediaContent($mediaIdSmall, base64_encode($data));
 			
+			$this->SendDebug("WriteMediaContentResized", "SetMediaImage for resized Image", 0);
+			$this->ShowMemoryUsage('Created resized Image');
+
 			return $result;
 		}
 
@@ -216,10 +194,11 @@ class CamSnapshot extends BrownsonBase
 		curl_close($curl_handle);
 
 		if ($fileContent===false) {
-			IPS_LogMessage(__file__, 'File "'.$snapshotURL.'" could NOT be found on the Server !!!');
+			$this->SendDebug("GetSnapshot", 'File "'.$snapshotURL.'" could NOT be found on the Server !!!', 0);
 			return false;
 		}
 		$this->SendDebug("GetSnapshot", "Loaded SnapshotImage from URL", 0);
+		$this->ShowMemoryUsage('Loaded SnapshotImage');
 
 		return $fileContent;
 	}
