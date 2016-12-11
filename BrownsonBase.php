@@ -33,7 +33,7 @@ class BrownsonBase extends IPSModule
 
 	// -------------------------------------------------------------------------
 	protected function RegisterMedia ($ident, $name, $fileName) {
-		$mediaId = @IPS_GetObjectIDByIdent($name, $this->InstanceID);
+		$mediaId = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
 		if ($mediaId === false) {
 			$mediaId	= IPS_CreateMedia(1);
 			IPS_SetParent($mediaId, $this->InstanceID);
@@ -42,7 +42,7 @@ class BrownsonBase extends IPSModule
 			IPS_SetPosition($mediaId, 0);
 			IPS_SetMediaFile($mediaId, $fileName, false);
 		}
-		return $MediaId;
+		return $mediaId;
 	}
 
 
