@@ -19,7 +19,7 @@ class CamSnapshot extends BrownsonBase
 		$this->RegisterTimer("RefreshTimer", 0, 'CamSnapshot_Refresh($_IPS[\'TARGET\']);');
 		$this->RegisterPropertyInteger("Interval", 300);
 		
-		$this->RegisterScript('refresh', 'Refresh', '<?\n\n CamSnapshot_Refresh($_IPS[\'TARGET\']); \n\n?>', 0);
+		$this->RegisterScript('refresh', 'Refresh', '<?\n\n CamSnapshot_Refresh(IPS_GetParent($_IPS['SELF'])); \n\n?>', 0);
 	}
 
 	// -------------------------------------------------------------------------
