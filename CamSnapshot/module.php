@@ -184,22 +184,25 @@ class CamSnapshot extends BrownsonBase
 	private function GetSnapshotImageFromURL($snapshotURL) {
 		$curl_handle=curl_init();
 		curl_setopt($curl_handle, CURLOPT_URL, $snapshotURL);
-		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 5);
-		curl_setopt($curl_handle, CURLOPT_TIMEOUT, 5);
+		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($curl_handle, CURLOPT_TIMEOUT, 20);
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER,true);
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl_handle, CURLOPT_FAILONERROR, true);
 
 		$fileContent = curl_exec($curl_handle);
-		curl_close($curl_handle);
 
 		if ($fileContent===false) {
 			$this->SendDebug("GetSnapshot", 'File "'.$snapshotURL.'" could NOT be found on the Server !!!', 0);
+			$this->SendDebug("GetSnapshot", 'Curl-Error: '.curl_error($curl_handle), 0);
+			curl_close($curl_handle);
 			return false;
 		}
 		$this->SendDebug("GetSnapshot", "Loaded SnapshotImage from URL", 0);
 		$this->ShowMemoryUsage('Loaded SnapshotImage');
+
+		curl_close($curl_handle);
 
 		return $fileContent;
 	}
