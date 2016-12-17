@@ -2,8 +2,8 @@
 	"translations": {
 		"de": { 
 			"Snapshot URL":               "Snapshot URL",
-			"Create Small Image":         "Bild mit kleinerer Auflösung erstellen",
 			"Use Media Cache":            "Cached MediaImages benützen",
+			"Create Small Image":         "Bild mit kleinerer Auflösung erstellen",
 			"Ratio Small Image":          "Verhältnis Image",
 			"AutoRefresh":                "Automatische Aktualisierung der Bilder",
 			"Seconds":                    "Sekunden",

@@ -8,7 +8,7 @@ Das Modul stellt Funktionen zum Laden und aktualisieren von Kamera Snapshots zur
 3. [Software-Installation](#3-software-installation)
 4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
 5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront & IPSView](#6-webfront)
+6. [WebFront & IPSView](#6-webfront--ipsview)
 7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
 
 ### 1. Funktionsumfang
