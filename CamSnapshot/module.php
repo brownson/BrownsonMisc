@@ -19,7 +19,7 @@ class CamSnapshot extends BrownsonBase
 		$this->RegisterTimer("RefreshTimer", 0, 'CamSnapshot_Refresh($_IPS[\'TARGET\']);');
 		$this->RegisterPropertyInteger("Interval", 300);
 		
-		$this->RegisterScript('refresh', 'Refresh', '<?\n\n CamSnapshot_Refresh(IPS_GetParent($_IPS["SELF"])); \n\n?>', 0);
+		$this->RegisterScript('refresh', 'Refresh', '<?  CamSnapshot_Refresh(IPS_GetParent($_IPS["SELF"])); ?>', 0);
 	}
 
 	// -------------------------------------------------------------------------
@@ -63,6 +63,8 @@ class CamSnapshot extends BrownsonBase
 		
 		if ($this->IsInstancePropertiesValid()) {
 			$snapshotURL      = $this->ReadPropertyString('SnapshotURL');
+			$snapshotURL      = trim($snapshotURL, ' ');
+			$snapshotURL      = str_replace(' ', '%20', $snapshotURL);
 			
 			// Download Images
 			$this->ShowMemoryUsage('Start Refresh of Images');
@@ -183,6 +185,7 @@ class CamSnapshot extends BrownsonBase
 	// -------------------------------------------------------------------------
 	private function GetSnapshotImageFromURL($snapshotURL) {
 		$curl_handle=curl_init();
+		curl_setopt($curl_handle, CURLOPT_HEADER, false);
 		curl_setopt($curl_handle, CURLOPT_URL, $snapshotURL);
 		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 10);
 		curl_setopt($curl_handle, CURLOPT_TIMEOUT, 20);
@@ -190,12 +193,14 @@ class CamSnapshot extends BrownsonBase
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl_handle, CURLOPT_FAILONERROR, true);
-
+		//curl_setopt($curl_handle, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.1 Safari/537.11');
 		$fileContent = curl_exec($curl_handle);
+		$rescode = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
 
 		if ($fileContent===false) {
 			$this->SendDebug("GetSnapshot", 'File "'.$snapshotURL.'" could NOT be found on the Server !!!', 0);
 			$this->SendDebug("GetSnapshot", 'Curl-Error: '.curl_error($curl_handle), 0);
+			$this->SendDebug("GetSnapshot", 'ResultCode: '.$rescode, 0);
 			curl_close($curl_handle);
 			return false;
 		}
